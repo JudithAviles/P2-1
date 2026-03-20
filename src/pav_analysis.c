@@ -13,10 +13,10 @@ float compute_power(const float *x, unsigned int N) {
     return power;
 }
 
-float compute_power_window(const float *x, unsigned int N) {
+/*float compute_power_window(const float *x, unsigned int N) {
     float sumSignal = 0;
     float sumWindow = 0;
-    float *w;
+    float *w[] = malloc(N * sizeof(float));
     int n;
     for(n = 0; n<N; n++){
         w[n] = 0.54 - 0.46*cosf(2.0*M_PI*n/(N-1));
@@ -25,7 +25,7 @@ float compute_power_window(const float *x, unsigned int N) {
     }
     float power = (float) 10*log10((sumSignal/sumWindow)+1e-10);
     return power;
-}
+}*/
 
 float compute_am(const float *x, unsigned int N) {
     float sum = 0;
