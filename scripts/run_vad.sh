@@ -1,5 +1,7 @@
 #!/bin/bash
 
+alpha0=$1
+
 # Be sure that this file has execution permissions:
 # Use the nautilus explorer or chmod +x run_vad.sh
 
