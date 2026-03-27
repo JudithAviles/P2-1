@@ -1,0 +1,8 @@
+#!/bin/bash
+
+for alpha0 in $(seq 5 0.1 6); do
+    echo alpha0
+    scripts/run_vinga.sh | grep TOTAL
+done
+
+#
