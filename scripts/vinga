@@ -1,8 +1,8 @@
 #!/bin/bash
 
 for alpha0 in $(seq 5 0.1 6); do
-    echo alpha0
-    scripts/run_vinga.sh | grep TOTAL
-done
+    echo -ne "alpha0 = $alpha0:\t"
+    scripts/run_vad.sh $alpha0 | grep TOTAL
+done | sort -k 3n
 
 #
