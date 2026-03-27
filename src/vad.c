@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "pav_analysis.h"
 #include "vad.h"
 
 const float FRAME_TIME = 10.0F; /* in ms. */
@@ -46,7 +47,6 @@ Features compute_features(const float *x, int N) {
   //feat.zcr = compute_zcr(x,N,fm);
   //feat.zcr = feat.am = (float) rand()/RAND_MAX;
   return feat;
-}
 }
 
 /* 
