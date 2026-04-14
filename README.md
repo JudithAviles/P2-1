@@ -157,9 +157,15 @@ Ejercicios
   * Incremento del nivel potencia en dB, respecto al nivel correspondiente al silencio inicial, para
     estar seguros de que un segmento de señal se corresponde con voz.
 
+*Entre 20 y 30 dB*
+
   * Duración mínima razonable de los segmentos de voz y silencio.
 
+*El tramo de voz más corto seria una respuesta corta monosilabica (tipo si o no) y podria durar entre 200 y 300 ms*
+
   * ¿Es capaz de sacar alguna conclusión a partir de la evolución de la tasa de cruces por cero?
+
+*Tiene picos en los fonemas sordos como es de esperar*
 
 
 ### Desarrollo del detector de actividad vocal
