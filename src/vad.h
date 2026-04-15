@@ -17,6 +17,7 @@ typedef struct {
   unsigned int frame_length;
   float last_feature; /* for debuggin purposes */
   float llindar0;
+  int hangover;
 } VAD_DATA;
 
 /* Call this function before using VAD: 

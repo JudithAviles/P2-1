@@ -94,17 +94,28 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0) {
   case ST_INIT:
     vad_data->state = ST_SILENCE;
     vad_data-> llindar0 = f.p+alpha0;
+    vad_data->hangover = 0;
     break;
 
   case ST_SILENCE:
-    if (f.p > vad_data->llindar0)
+    if (f.p > vad_data->llindar0){
       vad_data->state = ST_VOICE;
+    }
+      vad_data->hangover = 5;
     //elseif(f.p > 0.5 && f.p.next > 0.5)
     break;
 
   case ST_VOICE:
-    if (f.p < (vad_data->llindar0))
-      vad_data->state = ST_SILENCE;
+    if (f.p > vad_data->llindar0) {
+    // As long as there is noise, keep the hangover credit full
+      vad_data->hangover = 5; 
+    } else {
+      // Energy is low! Let's count down instead of switching immediately
+      vad_data->hangover--;
+      if (vad_data->hangover <= 0) {
+        vad_data->state = ST_SILENCE;
+      }
+    }
     break;
 
   case ST_UNDEF:
