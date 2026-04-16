@@ -62,10 +62,8 @@ VAD_DATA * vad_open(float rate) {
 }
 
 VAD_STATE vad_close(VAD_DATA *vad_data) {
-  /* 
-   * TODO: decide what to do with the last undecided frames
-   */
   VAD_STATE state = vad_data->state;
+  if (state == ST_UNDEF) state = ST_SILENCE;
 
   free(vad_data);
   return state;
@@ -106,20 +104,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1) {
     if (may_be_voice) {
       vad_data->state = ST_VOICE;
       vad_data->hangover = 7;
-      //vad_data->indef_counter = 1;
     }
-    break;
-
-  case ST_UNDEF:
-    /*if (may_be_voice) {
-      vad_data->indef_counter++;
-      if (vad_data->indef_counter >= 3) {
-        vad_data->state = ST_VOICE;
-        vad_data->hangover = 0;
-      }
-    } else {
-      vad_data->state = ST_SILENCE;
-    }*/
     break;
   
 
@@ -133,8 +118,16 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1) {
       }
     }
     break;
+  
+  case ST_UNDEF:
+    /*if (may_be_voice) {
+      vad_data->state = ST_VOICE;
+      vad_data->hangover = 7;
+    } else {
+      vad_data->state = ST_SILENCE;
+    }*/
+    break;
   }
- 
 
   if (vad_data->state == ST_VOICE)
     return ST_VOICE;
