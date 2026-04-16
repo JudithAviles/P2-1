@@ -53,14 +53,16 @@ Features compute_features(const float *x, int N, float fm) {
  * TODO: Init the values of vad_data
  */
 
-VAD_DATA * vad_open(float rate) {
+VAD_DATA * vad_open(float rate, float beta) {
   VAD_DATA *vad_data = malloc(sizeof(VAD_DATA));
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
-  //Inicialitzacio de les variables per al llindar promitjat de potencia.
   vad_data->init_count = 0;
   vad_data->accumulated_p = 0.0f;
+  vad_data->beta = beta; 
+  vad_data->llindar0 = 0.0f; 
+  vad_data->llindar_zcr = 0.0f;
 
   return vad_data;
 }
@@ -84,15 +86,12 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1) {
 
   Features f = compute_features(x, vad_data->frame_length , vad_data->sampling_rate);
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
-  int may_be_voice = (f.p > vad_data->llindar0 || f.zcr > vad_data->llindar_zcr); 
-
 
   switch (vad_data->state) {
   case ST_INIT:
     vad_data->accumulated_p += f.p;
     vad_data->init_count++;
     
-    //Aqui agafem els primers 10 frames per calcular el llindar de potencia
     if(vad_data->init_count >= 10) {
       float mean_p = vad_data->accumulated_p / 10.0f;
       vad_data->llindar0 = mean_p + alpha0;
@@ -103,15 +102,21 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1) {
     return ST_SILENCE;
     break;
 
-  case ST_SILENCE:
+  case ST_SILENCE: {
+    int may_be_voice = (f.p > vad_data->llindar0 || f.zcr > vad_data->llindar_zcr);
     if (may_be_voice) {
       vad_data->state = ST_VOICE;
       vad_data->hangover = 7;
+    } else {
+      // Threshold adaptatiu:
+      // Formula: llindar0 = (1-beta)*(llindar0-alpha0) + beta*P + alpha0
+      vad_data->llindar0 = (1 - vad_data->beta) * (vad_data->llindar0 - alpha0) + vad_data->beta * f.p + alpha0;
     }
     break;
-  
+  }
 
-  case ST_VOICE:
+  case ST_VOICE: {
+    int may_be_voice = (f.p > vad_data->llindar0 || f.zcr > vad_data->llindar_zcr);
     if (may_be_voice) {
       vad_data->hangover = 7; 
     } else {
@@ -121,11 +126,12 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1) {
       }
     }
     break;
+  }
   
   case ST_UNDEF:
     /*if (may_be_voice) {
       vad_data->state = ST_VOICE;
-      vad_data->hangover = 7;
+      vad_data->hangover = 5;
     } else {
       vad_data->state = ST_SILENCE;
     }*/

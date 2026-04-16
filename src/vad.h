@@ -24,13 +24,15 @@ typedef struct {
   //Per a la incicialització del llindar de potencia
   float accumulated_p;
   int init_count;
+  //Per al seguiment del pis de soroll (leaky integrator)
+  float beta; // [ADAPT. TRESH] Factor d'adaptacio: 0=no adaptacio, 1=adaptacio total
 } VAD_DATA;
 
 /* Call this function before using VAD: 
    It should return allocated and initialized values of vad_data
 
    sampling_rate: ... the sampling rate */
-VAD_DATA *vad_open(float sampling_rate);
+VAD_DATA *vad_open(float sampling_rate, float beta); // [ADAPT. TRESH] beta: factor d'adaptacio del llindar
 
 /* vad works frame by frame.
    This function returns the frame size so that the program knows how
