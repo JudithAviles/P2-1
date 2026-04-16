@@ -32,7 +32,7 @@ typedef struct {
  * TODO: Delete and use your own features!
  */
 
-Features compute_features(const float *x, int N) {
+Features compute_features(const float *x, int N, float fm) {
   /*
    * Input: x[i] : i=0 .... N-1 
    * Ouput: computed features
@@ -44,7 +44,7 @@ Features compute_features(const float *x, int N) {
    */
   Features feat;
   feat.p = compute_power(x,N);
-  //feat.zcr = compute_zcr(x,N,fm);
+  feat.zcr = compute_zcr(x,N,fm);
   //feat.zcr = feat.am = (float) rand()/RAND_MAX;
   return feat;
 }
@@ -80,53 +80,66 @@ unsigned int vad_frame_size(VAD_DATA *vad_data) {
  * using a Finite State Automata
  */
 
-VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0) {
+VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1) {
 
   /* 
    * TODO: You can change this, using your own features,
    * program finite state automaton, define conditions, etc.
    */
 
-  Features f = compute_features(x, vad_data->frame_length);
+
+  Features f = compute_features(x, vad_data->frame_length , vad_data->sampling_rate);
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
+  int may_be_voice = (f.p > vad_data->llindar0 || f.zcr > vad_data->llindar_zcr); 
+
 
   switch (vad_data->state) {
   case ST_INIT:
     vad_data->state = ST_SILENCE;
-    vad_data-> llindar0 = f.p+alpha0;
+    vad_data->llindar0 = f.p+alpha0;
+    vad_data->llindar_zcr = alpha1*vad_data->sampling_rate/2;
     vad_data->hangover = 0;
+    vad_data->indef_counter = 0;
     break;
 
   case ST_SILENCE:
-    if (f.p > vad_data->llindar0){
+    if (may_be_voice) {
       vad_data->state = ST_VOICE;
+      vad_data->hangover = 7;
+      //vad_data->indef_counter = 1;
     }
-      vad_data->hangover = 5;
-    //elseif(f.p > 0.5 && f.p.next > 0.5)
     break;
 
-  case ST_VOICE:
-    if (f.p > vad_data->llindar0) {
-    // As long as there is noise, keep the hangover credit full
-      vad_data->hangover = 5; 
+  case ST_UNDEF:
+    /*if (may_be_voice) {
+      vad_data->indef_counter++;
+      if (vad_data->indef_counter >= 3) {
+        vad_data->state = ST_VOICE;
+        vad_data->hangover = 0;
+      }
     } else {
-      // Energy is low! Let's count down instead of switching immediately
+      vad_data->state = ST_SILENCE;
+    }*/
+    break;
+  
+
+  case ST_VOICE:
+    if (may_be_voice) {
+      vad_data->hangover = 7; 
+    } else {
       vad_data->hangover--;
       if (vad_data->hangover <= 0) {
         vad_data->state = ST_SILENCE;
       }
     }
     break;
-
-  case ST_UNDEF:
-    break;
   }
+ 
 
-  if (vad_data->state == ST_SILENCE ||
-      vad_data->state == ST_VOICE)
-    return vad_data->state;
+  if (vad_data->state == ST_VOICE)
+    return ST_VOICE;
   else
-    return ST_UNDEF;
+    return ST_SILENCE;
 }
 
 void vad_show_state(const VAD_DATA *vad_data, FILE *out) {

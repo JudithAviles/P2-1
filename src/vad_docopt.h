@@ -17,6 +17,7 @@ typedef struct {
     int version;
     /* options with arguments */
     char *alpha0;
+    char *alpha1;
     char *input_wav;
     char *output_vad;
     char *output_wav;
@@ -38,6 +39,7 @@ const char help_message[] =
 "   -o FILE, --output-vad=FILE  Label file with the result of VAD\n"
 "   -w FILE, --output-wav=FILE  WAVE file with silences cleared\n"
 "   -0 FLOAT, --alpha0 FLOAT    Increment per calcular el llindar0 [default: 10]\n"
+"   -1 FLOAT, --alpha1 FLOAT    Increment per calcular el llindar1 [default: 10]\n"
 "   -v, --verbose  Show debug information\n"
 "   -h, --help     Show this screen\n"
 "   --version      Show the version of the project\n"
@@ -275,6 +277,9 @@ int elems_to_args(Elements *elements, DocoptArgs *args, bool help,
         } else if (!strcmp(option->olong, "--alpha0")) {
             if (option->argument)
                 args->alpha0 = option->argument;
+        } else if (!strcmp(option->olong, "--alpha1")) {
+            if (option->argument)
+                args->alpha1 = option->argument;
         } else if (!strcmp(option->olong, "--input-wav")) {
             if (option->argument)
                 args->input_wav = option->argument;
@@ -304,7 +309,7 @@ int elems_to_args(Elements *elements, DocoptArgs *args, bool help,
 
 DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) {
     DocoptArgs args = {
-        0, 0, 0, (char*) "10", NULL, NULL, NULL,
+        0, 0, 0, (char*) "10", (char*) "10", NULL, NULL, NULL,
         usage_pattern, help_message
     };
     Tokens ts;
@@ -317,11 +322,12 @@ DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) {
         {"-v", "--verbose", 0, 0, NULL},
         {NULL, "--version", 0, 0, NULL},
         {"-0", "--alpha0", 1, 0, NULL},
+        {"-1", "--alpha1", 1, 0, NULL},
         {"-i", "--input-wav", 1, 0, NULL},
         {"-o", "--output-vad", 1, 0, NULL},
         {"-w", "--output-wav", 1, 0, NULL}
     };
-    Elements elements = {0, 0, 7, commands, arguments, options};
+    Elements elements = {0, 0, 8, commands, arguments, options};
 
     ts = tokens_new(argc, argv);
     if (parse_args(&ts, &elements))

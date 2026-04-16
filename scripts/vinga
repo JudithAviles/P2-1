@@ -1,8 +1,10 @@
 #!/bin/bash
 
-for alpha0 in $(seq 5 0.1 6); do
-    echo -ne "alpha0 = $alpha0:\t"
-    scripts/run_vad.sh $alpha0 | grep TOTAL
+for alpha0 in $(seq 9 0.2 11); do
+    for alpha1 in $(seq 0.4 0.1 0.6); do
+        echo -ne "alpha0 = $alpha0, alpha1 = $alpha1:\t"
+        scripts/run_vad.sh $alpha0 $alpha1 | grep TOTAL
+    done
 done | sort -t: -k 3n
 
 #
