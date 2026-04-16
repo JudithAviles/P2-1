@@ -15,11 +15,15 @@ typedef struct {
   VAD_STATE state;
   float sampling_rate;
   unsigned int frame_length;
-  float last_feature; /* for debuggin purposes */
+  float last_feature; 
+  //llindars de potencia i zcr
   float llindar0;
   float llindar_zcr;
+  //Per al smoothing de veu a silenci.
   int hangover;
-  int indef_counter;
+  //Per a la incicialització del llindar de potencia
+  float accumulated_p;
+  int init_count;
 } VAD_DATA;
 
 /* Call this function before using VAD: 

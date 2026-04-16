@@ -58,6 +58,10 @@ VAD_DATA * vad_open(float rate) {
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
+  //Inicialitzacio de les variables per al llindar promitjat de potencia.
+  vad_data->init_count = 0;
+  vad_data->accumulated_p = 0.0f;
+
   return vad_data;
 }
 
@@ -73,17 +77,9 @@ unsigned int vad_frame_size(VAD_DATA *vad_data) {
   return vad_data->frame_length;
 }
 
-/* 
- * TODO: Implement the Voice Activity Detection 
- * using a Finite State Automata
- */
+
 
 VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1) {
-
-  /* 
-   * TODO: You can change this, using your own features,
-   * program finite state automaton, define conditions, etc.
-   */
 
 
   Features f = compute_features(x, vad_data->frame_length , vad_data->sampling_rate);
@@ -93,11 +89,18 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1) {
 
   switch (vad_data->state) {
   case ST_INIT:
-    vad_data->state = ST_SILENCE;
-    vad_data->llindar0 = f.p+alpha0;
-    vad_data->llindar_zcr = alpha1*vad_data->sampling_rate/2;
-    vad_data->hangover = 0;
-    vad_data->indef_counter = 0;
+    vad_data->accumulated_p += f.p;
+    vad_data->init_count++;
+    
+    //Aqui agafem els primers 10 frames per calcular el llindar de potencia
+    if(vad_data->init_count >= 10) {
+      float mean_p = vad_data->accumulated_p / 10.0f;
+      vad_data->llindar0 = mean_p + alpha0;
+      vad_data->llindar_zcr = alpha1 * vad_data->sampling_rate / 2.0f;
+      vad_data->state = ST_SILENCE;
+      vad_data->hangover = 0;
+    }
+    return ST_SILENCE;
     break;
 
   case ST_SILENCE:
