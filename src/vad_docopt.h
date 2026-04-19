@@ -41,7 +41,7 @@ const char help_message[] =
 "   -w FILE, --output-wav=FILE  WAVE file with silences cleared\n"
 "   -0 FLOAT, --alpha0 FLOAT    Increment per calcular el llindar0 [default: 10]\n"
 "   -1 FLOAT, --alpha1 FLOAT    Increment per calcular el llindar1 [default: 10]\n"
-"   -b FLOAT, --beta FLOAT      Factor d'adaptacio del pis de soroll [default: 0.001]\n"
+"   -b FLOAT, --beta FLOAT      Factor d'adaptacio del llindar de soroll [default: 0.001]\n"
 "   -v, --verbose  Show debug information\n"
 "   -h, --help     Show this screen\n"
 "   --version      Show the version of the project\n"
