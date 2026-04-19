@@ -182,6 +182,11 @@ Ejercicios
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
   el resumen).
 
+[**************** Summary ****************]
+Recall V:572.57/590.75 96.92%   Precision V:572.57/628.23 91.14%   F-score V (2)  : 95.71%
+Recall S:320.59/376.26 85.21%   Precision S:320.59/338.77 94.63%   F-score S (1/2): 92.58%
+===> TOTAL: 94.133%
+
 
 ### Trabajos de ampliación
 
