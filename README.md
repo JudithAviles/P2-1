@@ -176,7 +176,11 @@ Ejercicios
 - Inserte una gráfica en la que se vea con claridad la señal temporal, el etiquetado manual y la detección
   automática conseguida para el fichero grabado al efecto. 
 
+![Comparación de Etiquetas](/PAVP2_AudioLabelComparison.png)
+
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
+
+*Entre el segundo 1.6 y el 1.9 hay un tramo de suido de potencia elevada (Con el power plot se observa un salto de 5-10 dB) y eso causa que el sistema etiquete como voz el silencio.*
 
 - Evalúe los resultados sobre la base de datos `db.v4` con el script `vad_evaluation.pl` e inserte a 
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
