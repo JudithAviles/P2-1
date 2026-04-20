@@ -176,11 +176,22 @@ Ejercicios
 - Inserte una gráfica en la que se vea con claridad la señal temporal, el etiquetado manual y la detección
   automática conseguida para el fichero grabado al efecto. 
 
+![Comparación de Etiquetas](/PAVP2_AudioLabelComparison.png)
+
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
+
+*Entre el segundo 1.6 y el 1.9 hay un tramo de suido de potencia elevada (Con el power plot se observa un salto de 5-10 dB) y eso causa que el sistema etiquete como voz el silencio.*
 
 - Evalúe los resultados sobre la base de datos `db.v4` con el script `vad_evaluation.pl` e inserte a 
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
   el resumen).
+
+```
+**************** Summary ****************
+Recall V:572.57/590.75 96.92%   Precision V:572.57/628.23 91.14%   F-score V (2)  : 95.71%
+Recall S:320.59/376.26 85.21%   Precision S:320.59/338.77 94.63%   F-score S (1/2): 92.58%
+===> TOTAL: 94.133%
+```
 
 
 ### Trabajos de ampliación
@@ -195,6 +206,8 @@ Ejercicios
 
 - Si ha usado `docopt_c` para realizar la gestión de las opciones y argumentos del programa `vad`, inserte
   una captura de pantalla en la que se vea el mensaje de ayuda del programa.
+
+  ![Uso de docopt_c](/PAVP2_vad-h.png)
 
 
 ### Contribuciones adicionales y/o comentarios acerca de la práctica

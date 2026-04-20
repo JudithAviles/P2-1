@@ -84,13 +84,13 @@ unsigned int vad_frame_size(VAD_DATA *vad_data) {
 
 VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1) {
 
-// Implementar prepocesado de señal para eliminar ruido/limpiar señal
-//    - data cleaning
-//        import librosa // This is a python library
-//        import noisereduce as nr
-//        y, sr = librosa.load(audio_path, sr=None)
-//        cleaned_audio = nr.reduce_noise(y=y, sr=sr)
-// Lindares -> Potencia más pequeña que m´nimo + duración mínima
+  //Implementar preprocesado de señal para eliminar ruido
+  //    - data cleaning
+  //       librosa -> libreria python
+  //       import noisereduce as nr
+  //       y, sr = librosa.load(audio_path, sr=None)
+  //       cleaned_audio = nr.reduce_noise(y=y, sr=sr)
+  //Llindars -> potencia mas pequeña que minimo mas duracion.
 
   Features f = compute_features(x, vad_data->frame_length , vad_data->sampling_rate);
   vad_data->last_feature = f.p; /* save feature, in case you want to show */

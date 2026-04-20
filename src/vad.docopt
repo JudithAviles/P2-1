@@ -11,7 +11,7 @@ Options:
    -w FILE, --output-wav=FILE  WAVE file with silences cleared
    -0 FLOAT, --alpha0 FLOAT    Increment per calcular el llindar0 [default: 10]
    -1 FLOAT, --alpha1 FLOAT    Increment per calcular el llindar1 [default: 10]
-   -b FLOAT, --beta FLOAT      Factor d'adaptacio del pis de soroll [default: 0.001]
+   -b FLOAT, --beta FLOAT      Factor d'adaptacio del llindar de soroll [default: 0.001]
 
    -v, --verbose  Show debug information
    -h, --help     Show this screen
