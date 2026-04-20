@@ -45,6 +45,7 @@ Features compute_features(const float *x, int N, float fm) {
   Features feat;
   feat.p = compute_power(x,N);
   feat.zcr = compute_zcr(x,N,fm);
+  feat.am = compute_am(x,N);
   //feat.zcr = feat.am = (float) rand()/RAND_MAX;
   return feat;
 }
@@ -83,6 +84,13 @@ unsigned int vad_frame_size(VAD_DATA *vad_data) {
 
 VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1) {
 
+// Implementar prepocesado de señal para eliminar ruido/limpiar señal
+//    - data cleaning
+//        import librosa // This is a python library
+//        import noisereduce as nr
+//        y, sr = librosa.load(audio_path, sr=None)
+//        cleaned_audio = nr.reduce_noise(y=y, sr=sr)
+// Lindares -> Potencia más pequeña que m´nimo + duración mínima
 
   Features f = compute_features(x, vad_data->frame_length , vad_data->sampling_rate);
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
@@ -103,7 +111,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1) {
     break;
 
   case ST_SILENCE: {
-    int may_be_voice = (f.p > vad_data->llindar0 || f.zcr > vad_data->llindar_zcr);
+    int may_be_voice = (f.p > vad_data->llindar0 || f.zcr > vad_data->llindar_zcr); // Maybe put zcr < llindar? El soroll té zcr més alt que la veu generalment
     if (may_be_voice) {
       vad_data->state = ST_VOICE;
       vad_data->hangover = 7;
