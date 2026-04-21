@@ -202,9 +202,9 @@ Recall S:320.59/376.26 85.21%   Precision S:320.59/338.77 94.63%   F-score S (1/
   la que se vea con claridad la señal antes y después de la cancelación (puede que `wavesurfer` no sea la
   mejor opción para esto, ya que no es capaz de visualizar varias señales al mismo tiempo).
 
-![Comparación de la cancelación de Ruido usando seaborn y matplotlib](/visualize/Comparison.png)
+![Comparación de la cancelación de Ruido usando seaborn y matplotlib](/visualize/comparison.png)
 
-Como podemos observar, algunos tramos de ruido siguen siendo etiquetados como voz, sin embargo el silencio ahora es realmente silencioso. Si se desea se puede escuchar el audio limpio dentro de la carpeta del repositorio visualize, asi como se pueden per los scripts de python usados para la cancelacion del ruido y la representación a partir de los resultados de vad.c.
+Como podemos observar, algunos tramos de ruido siguen siendo etiquetados como voz, sin embargo el silencio ahora es realmente silencioso. Si se desea se puede escuchar el audio limpio dentro de la carpeta del repositorio visualize, asi como se pueden per los scripts de python usados para la cancelacion del ruido y la representación a partir de los resultados de vad.c.v
 
 #### Gestión de las opciones del programa usando `docopt_c`
 
