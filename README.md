@@ -215,8 +215,19 @@ Recall S:320.59/376.26 85.21%   Precision S:320.59/338.77 94.63%   F-score S (1/
 - Indique a continuación si ha realizado algún tipo de aportación suplementaria (algoritmos de detección o 
   parámetros alternativos, etc.).
 
+
+  * Estimación Inicial del Piso de Ruido: En lugar de utilizar la primera trama para fijar el umbral, se ha implementado una fase en el estado ST_INIT que calcula la media de potencia de las primeras 10 tramas. Esto evita que ruidos impulsivos al inicio del audio sesguen la detección.
+
+  * Detección con Energía y ZCR: Se ha integrado la tasa de cruces por cero como característica complementaria a la potencia. Esto ha permitido mejorar significativamente el Recall de voz al detectar segmentos de baja energía pero alta frecuencia. Esto, según nuestras pruebas, ayuda especialmente en la detección de consonantes sordas (como /s/)del final de palabra que de otra forma serian cortadas.
+
+  * Algoritmo de Umbral Adaptativo: Se ha implementado un seguimiento dinámico del ruido de fondo mediante una actualizacióndel umbral en el estado de silencio. Utilizando un parámetro de adaptación beta, el sistema es capaz de detectar las variaciones del ruido ambiental, reajustando el llindar0 en tiempo real.
+
+  * Mecanismo de Hangover Estabilizador: Se ha ajustado un contador de hangover de 7 tramas para proporcionar continuidad a los segmentos de voz, evitando falsos negativos producidos por oclusiones momentáneas o caídas de energía entre sílabas
+
 - Si lo desea, puede realizar también algún comentario acerca de la realización de la práctica que
   considere de interés de cara a su evaluación.
+
+  Para hallar los valores óptimos de los parámetros alpha0​, alpha1​, y beta, se han adaptado los scripts de Bash (run_vad.sh y vinga). Estos scripts han permitido realizar una búsqueda de los parámetros óptimos, evaluando las combinaciones sobre la base de datos db.v4 hasta encontrar el máximo de F-score.
 
 
 ### Antes de entregar la práctica
