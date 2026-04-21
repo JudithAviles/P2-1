@@ -35,27 +35,27 @@ Para cargar los ficheros en su ordenador personal debe seguir los pasos siguient
     Asegúrese de usar *Clone with HTTPS*.
   -  Abra una sesión de Bash en su ordenador personal y vaya al directorio **PAV**. Desde ahí, ejecute:
 
-    ```.sh
-    git clone dirección-del-fork-de-la-práctica
-    ```
+```
+git clone dirección-del-fork-de-la-práctica
+```
 
   -  Vaya al directorio de la práctica `cd P2`.
 
   -  Cambie a la rama **fulano-mengano** con la orden:
 
-    ```.sh
-    git checkout fulano-mengano
-    ```
+```
+git checkout fulano-mengano
+```
 
 *  A partir de este momento, todos los miembros del grupo de prácticas pueden trabajar en su directorio
   local del modo habitual, usando el repositorio remoto en GitHub como repositorio central para el trabajo colaborativo
   de los distintos miembros del grupo de prácticas o como copia de seguridad.
   -  Puede *confirmar* versiones del proyecto en su directorio local con las órdenes siguientes:
 
-    ```.sh
-    git add .
-    git commit -m "Mensaje del commit"
-    ```
+```
+git add .
+git commit -m "Mensaje del commit"
+```
 
   -  Las versiones confirmadas, y sólo ellas, se almacenan en el repositorio y pueden ser accedidas en cualquier momento.
 
@@ -66,11 +66,10 @@ Para cargar los ficheros en su ordenador personal debe seguir los pasos siguient
 
   -  La versión actual del directorio local se sube al repositorio remoto con la orden:
 
-    ```.sh
-    git push
-    ```
-
-    *  Si el repositorio remoto contiene cambios no presentes en el directorio local, `git` puede negarse
+```.sh
+git push
+```
+  *  Si el repositorio remoto contiene cambios no presentes en el directorio local, `git` puede negarse
       a subir el nuevo contenido.
 
       -  En ese caso, lo primero que deberemos hacer es incorporar los cambios presentes en el repositorio
@@ -89,11 +88,11 @@ Para cargar los ficheros en su ordenador personal debe seguir los pasos siguient
 
   -  Para bajar al directorio local el contenido del repositorio GitHub hay que ejecutar la orden:
 
-    ```.sh
-    git pull
-    ```
-  
-    *  Si el repositorio local contiene cambios no presentes en el directorio remoto, `git` puede negarse a bajar
+```.sh
+git pull    
+```
+ 
+  *  Si el repositorio local contiene cambios no presentes en el directorio remoto, `git` puede negarse a bajar
       el contenido de este último.
 
       -  La resolución de los posibles conflictos se realiza como se explica más arriba para
