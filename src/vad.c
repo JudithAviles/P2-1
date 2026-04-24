@@ -37,16 +37,10 @@ Features compute_features(const float *x, int N, float fm) {
    * Input: x[i] : i=0 .... N-1 
    * Ouput: computed features
    */
-  /* 
-   * DELETE and include a call to your own functions
-   *
-   * For the moment, compute random value between 0 and 1 
-   */
   Features feat;
   feat.p = compute_power(x,N);
   feat.zcr = compute_zcr(x,N,fm);
   feat.am = compute_am(x,N);
-  //feat.zcr = feat.am = (float) rand()/RAND_MAX;
   return feat;
 }
 
@@ -82,7 +76,7 @@ unsigned int vad_frame_size(VAD_DATA *vad_data) {
 
 
 
-VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1) {
+VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1, float llindar_amp) {
 
   //Implementar preprocesado de señal para eliminar ruido
   //    - data cleaning
@@ -111,24 +105,31 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1) {
     break;
 
   case ST_SILENCE: {
-    int may_be_voice = (f.p > vad_data->llindar0 || f.zcr > vad_data->llindar_zcr); // Maybe put zcr < llindar? El soroll té zcr més alt que la veu generalment
+    int may_be_voice = (f.p > vad_data->llindar0 || f.zcr > vad_data->llindar_zcr || f.am > llindar_amp);
     if (may_be_voice) {
       vad_data->state = ST_VOICE;
-      vad_data->hangover = 7;
+      vad_data->hangover = 1;
     } else {
       // Threshold adaptatiu:
       // Formula: llindar0 = (1-beta)*(llindar0-alpha0) + beta*P + alpha0
       vad_data->llindar0 = (1 - vad_data->beta) * (vad_data->llindar0 - alpha0) + vad_data->beta * f.p + alpha0;
+      llindar_amp = (1 - vad_data->beta) * (llindar_amp);
     }
     break;
   }
 
   case ST_VOICE: {
-    int may_be_voice = (f.p > vad_data->llindar0 || f.zcr > vad_data->llindar_zcr);
+    int may_be_voice = (f.p > vad_data->llindar0 || f.zcr > vad_data->llindar_zcr || f.am > llindar_amp);
+    int may_be_silence = 0;
     if (may_be_voice) {
-      vad_data->hangover = 7; 
+      vad_data->hangover = 13; 
     } else {
-      vad_data->hangover--;
+      may_be_silence = (f.p < vad_data->llindar0-(2*alpha0) || f.am < llindar_amp/50);
+      if (may_be_silence) {
+        vad_data->hangover = vad_data->hangover - 2;
+      } else {
+        vad_data->hangover--;
+      }
       if (vad_data->hangover <= 0) {
         vad_data->state = ST_SILENCE;
       }

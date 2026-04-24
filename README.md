@@ -156,15 +156,15 @@ Ejercicios
   * Incremento del nivel potencia en dB, respecto al nivel correspondiente al silencio inicial, para
     estar seguros de que un segmento de señal se corresponde con voz.
 
-*Entre 20 y 30 dB*
+*Entre 20 y 30 dB.*
 
   * Duración mínima razonable de los segmentos de voz y silencio.
 
-*El tramo de voz más corto seria una respuesta corta monosilabica (tipo si o no) y podria durar entre 200 y 300 ms*
+*El tramo de voz más corto seria una respuesta corta monosilabica (tipo si o no) o una preposición (a, y, o) y podria durar entre 200 y 300 ms.*
 
   * ¿Es capaz de sacar alguna conclusión a partir de la evolución de la tasa de cruces por cero?
 
-*Tiene picos en los fonemas sordos como es de esperar*
+*Como es de esperar, tiene picos en los fonemas sordos. Tanto el silencio como la voz sonora tienen una tasa de cruces por cero similar.*
 
 
 ### Desarrollo del detector de actividad vocal
@@ -179,7 +179,7 @@ Ejercicios
 
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
 
-*Entre el segundo 1.6 y el 1.9 hay un tramo de suido de potencia elevada (Con el power plot se observa un salto de 5-10 dB) y eso causa que el sistema etiquete como voz el silencio.*
+*Entre el segundo 1.6 y el 1.9 hay un tramo de ruido de potencia elevada (Con el power plot se observa un salto de 5-10 dB) y este causa que el sistema etiquete el silencio como voz.*
 
 - Evalúe los resultados sobre la base de datos `db.v4` con el script `vad_evaluation.pl` e inserte a 
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
@@ -219,13 +219,13 @@ Como podemos observar, algunos tramos de ruido siguen siendo etiquetados como vo
   parámetros alternativos, etc.).
 
 
-  * Estimación Inicial del Piso de Ruido: En lugar de utilizar la primera trama para fijar el umbral, se ha implementado una fase en el estado ST_INIT que calcula la media de potencia de las primeras 10 tramas. Esto evita que ruidos impulsivos al inicio del audio sesguen la detección.
+  * __Estimación Inicial del Piso de Ruido__: En lugar de utilizar la primera trama para fijar el umbral, se ha implementado una fase en el estado ST_INIT que calcula la media de potencia de las primeras 10 tramas. Esto evita que ruidos impulsivos al inicio del audio sesguen la detección.
 
-  * Detección con Energía y ZCR: Se ha integrado la tasa de cruces por cero como característica complementaria a la potencia. Esto ha permitido mejorar significativamente el Recall de voz al detectar segmentos de baja energía pero alta frecuencia. Esto, según nuestras pruebas, ayuda especialmente en la detección de consonantes sordas (como /s/)del final de palabra que de otra forma serian cortadas.
+  * __Detección con Energía y ZCR__: Se ha integrado la tasa de cruces por cero como característica complementaria a la potencia. Esto ha permitido mejorar significativamente el Recall de voz al detectar segmentos de baja energía pero alta frecuencia. Esto, según nuestras pruebas, ayuda especialmente en la detección de consonantes sordas (como /s/) del final de palabra que de otra forma serian etiquetadas como silencio.
 
-  * Algoritmo de Umbral Adaptativo: Se ha implementado un seguimiento dinámico del ruido de fondo mediante una actualizacióndel umbral en el estado de silencio. Utilizando un parámetro de adaptación beta, el sistema es capaz de detectar las variaciones del ruido ambiental, reajustando el llindar0 en tiempo real.
+  * __Algoritmo de Umbral Adaptativo__: Se ha implementado un seguimiento dinámico del ruido de fondo mediante una actualizacióndel umbral en el estado de silencio. Utilizando un parámetro de adaptación beta, el sistema es capaz de detectar las variaciones del ruido ambiental, reajustando _llindar0_ en tiempo real.
 
-  * Mecanismo de Hangover Estabilizador: Se ha ajustado un contador de hangover de 7 tramas para proporcionar continuidad a los segmentos de voz, evitando falsos negativos producidos por oclusiones momentáneas o caídas de energía entre sílabas
+  * __Mecanismo de Hangover Estabilizador__: Se ha ajustado un contador de hangover de 7 tramas para proporcionar continuidad a los segmentos de voz, evitando falsos negativos producidos por oclusiones momentáneas o caídas de energía entre sílabas
 
 - Si lo desea, puede realizar también algún comentario acerca de la realización de la práctica que
   considere de interés de cara a su evaluación.

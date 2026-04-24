@@ -3,6 +3,7 @@
 alpha0=${1:-9}
 alpha1=${2:-0.5}
 beta=${3:-0.001}
+llindar_amp=${4:-0.05}
 
 # Be sure that this file has execution permissions:
 # Use the nautilus explorer or chmod +x run_vad.sh
