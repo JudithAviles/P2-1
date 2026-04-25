@@ -227,7 +227,7 @@ Como podemos observar, algunos tramos de ruido siguen siendo etiquetados como vo
 
   * __Algoritmo de Umbral Adaptativo__: Se ha implementado un seguimiento dinámico del ruido de fondo mediante una actualizacióndel umbral en el estado de silencio. Utilizando un parámetro de adaptación beta, el sistema es capaz de detectar las variaciones del ruido ambiental, reajustando _llindar0_ y _llindar\_amp_ en tiempo real.
 
-  * __Mecanismo de Hangover Estabilizador__: Se ha ajustado un contador de hangover de 1 trama para el silencio y 12 tramas para la voz para proporcionar continuidad a los segmentos de voz, evitando falsos negativos producidos por oclusiones momentáneas o caídas de energía entre sílabas. Adicionalmente, se implementa un mecanismo de discriminación según el cual, si un segmento tiene potencia o amplitud por debajo de unos lindares definidos por 'llindar0 - (1.8*alpha0)` y 'llindar_amp/14', el hangover es reducido en 3 en vez de 1.
+  * __Mecanismo de Hangover Estabilizador__: Se ha ajustado un contador de hangover de 1 trama para el silencio y 12 tramas para la voz para proporcionar continuidad a los segmentos de voz, evitando falsos negativos producidos por oclusiones momentáneas o caídas de energía entre sílabas. Adicionalmente, se implementa un mecanismo de discriminación según el cual, si un segmento tiene potencia o amplitud por debajo de unos lindares definidos por `llindar0 - (1.8*alpha0)` y `llindar_amp/14`, el hangover es reducido en 3 en vez de 1.
 
 - Si lo desea, puede realizar también algún comentario acerca de la realización de la práctica que
   considere de interés de cara a su evaluación.
