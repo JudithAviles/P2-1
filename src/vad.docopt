@@ -12,7 +12,7 @@ Options:
    -0 FLOAT, --alpha0 FLOAT    Increment per calcular el llindar0 [default: 9]
    -1 FLOAT, --alpha1 FLOAT    Increment per calcular el llindar1 [default: 0.5]
    -b FLOAT, --beta FLOAT      Factor d'adaptacio del llindar de soroll [default: 0.001]
-   -f FLOAT, --amp FLOAT       Factor d'amplitud màxima segons el senyal per considerar veu [default: 0.06]
+   -f FLOAT, --amp FLOAT       Factor d'amplitud màxima segons el senyal per considerar veu [default: 0.09]
 
    -v, --verbose  Show debug information
    -h, --help     Show this screen

@@ -156,7 +156,7 @@ Ejercicios
   * Incremento del nivel potencia en dB, respecto al nivel correspondiente al silencio inicial, para
     estar seguros de que un segmento de señal se corresponde con voz.
 
-*Entre 20 y 30 dB.*
+*Entre 10 y 20 dB.*
 
   * Duración mínima razonable de los segmentos de voz y silencio.
 
@@ -179,7 +179,7 @@ Ejercicios
 
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
 
-*Entre el segundo 1.6 y el 1.9 hay un tramo de ruido de potencia elevada (Con el power plot se observa un salto de 5-10 dB) y este causa que el sistema etiquete el silencio como voz.*
+*Entre el segundo 1.6 y el 1.9 hay un tramo de ruido de potencia elevada (Con el power plot se observa un salto de 5-10 dB) y este causa que el sistema etiquete el silencio como voz. De manera similar, en otros instantes cortos de potencia elevada a causa de ruido el etiquetado varía rápidamente entre voz y silencio.*
 
 - Evalúe los resultados sobre la base de datos `db.v4` con el script `vad_evaluation.pl` e inserte a 
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
@@ -187,9 +187,9 @@ Ejercicios
 
 ```
 **************** Summary ****************
-Recall V:572.57/590.75 96.92%   Precision V:572.57/628.23 91.14%   F-score V (2)  : 95.71%
-Recall S:320.59/376.26 85.21%   Precision S:320.59/338.77 94.63%   F-score S (1/2): 92.58%
-===> TOTAL: 94.133%
+Recall V:575.09/590.75 97.35%   Precision V:575.09/620.65 92.66%   F-score V (2)  : 96.37%
+Recall S:330.69/376.26 87.89%   Precision S:330.69/346.35 95.48%   F-score S (1/2): 93.86%
+===> TOTAL: 95.108%
 ```
 
 
@@ -203,7 +203,7 @@ Recall S:320.59/376.26 85.21%   Precision S:320.59/338.77 94.63%   F-score S (1/
 
 ![Comparación de la cancelación de Ruido usando seaborn y matplotlib](/visualize/comparison.png)
 
-Como podemos observar, algunos tramos de ruido siguen siendo etiquetados como voz, sin embargo el silencio ahora es realmente silencioso. Si se desea se puede escuchar el audio limpio dentro de la carpeta del repositorio visualize, asi como se pueden per los scripts de python usados para la cancelacion del ruido y la representación a partir de los resultados de vad.c.v
+Como podemos observar, algunos tramos de ruido siguen siendo etiquetados como voz, sin embargo el silencio ahora es realmente silencioso. Si se desea se puede escuchar el audio limpio dentro de la carpeta del repositorio visualize, asi como se pueden per los scripts de python usados para la cancelacion del ruido y la representación a partir de los resultados de vad.c.
 
 #### Gestión de las opciones del programa usando `docopt_c`
 
@@ -221,16 +221,18 @@ Como podemos observar, algunos tramos de ruido siguen siendo etiquetados como vo
 
   * __Estimación Inicial del Piso de Ruido__: En lugar de utilizar la primera trama para fijar el umbral, se ha implementado una fase en el estado ST_INIT que calcula la media de potencia de las primeras 10 tramas. Esto evita que ruidos impulsivos al inicio del audio sesguen la detección.
 
-  * __Detección con Energía y ZCR__: Se ha integrado la tasa de cruces por cero como característica complementaria a la potencia. Esto ha permitido mejorar significativamente el Recall de voz al detectar segmentos de baja energía pero alta frecuencia. Esto, según nuestras pruebas, ayuda especialmente en la detección de consonantes sordas (como /s/) del final de palabra que de otra forma serian etiquetadas como silencio.
+  * __Detección con ZCR__: Se ha integrado la tasa de cruces por cero como característica complementaria a la potencia. Esto ha permitido mejorar significativamente el Recall de voz al detectar segmentos de baja energía pero alta frecuencia. Esto, según nuestras pruebas, ayuda especialmente en la detección de consonantes sordas (como /s/) del final de palabra que de otra forma serian etiquetadas como silencio.
 
-  * __Algoritmo de Umbral Adaptativo__: Se ha implementado un seguimiento dinámico del ruido de fondo mediante una actualizacióndel umbral en el estado de silencio. Utilizando un parámetro de adaptación beta, el sistema es capaz de detectar las variaciones del ruido ambiental, reajustando _llindar0_ en tiempo real.
+   * __Detección con amplitud__: Se ha integrado la amplitud de las muestras de la señal como característica complementaria a la potencia y la tasa de cruces por cero. Esto permite discriminar segmentos con una amplitud más pequeña para detectar el final de tramos de voz.
 
-  * __Mecanismo de Hangover Estabilizador__: Se ha ajustado un contador de hangover de 7 tramas para proporcionar continuidad a los segmentos de voz, evitando falsos negativos producidos por oclusiones momentáneas o caídas de energía entre sílabas
+  * __Algoritmo de Umbral Adaptativo__: Se ha implementado un seguimiento dinámico del ruido de fondo mediante una actualizacióndel umbral en el estado de silencio. Utilizando un parámetro de adaptación beta, el sistema es capaz de detectar las variaciones del ruido ambiental, reajustando _llindar0_ y _llindar\_amp_ en tiempo real.
+
+  * __Mecanismo de Hangover Estabilizador__: Se ha ajustado un contador de hangover de 1 trama para el silencio y 12 tramas para la voz para proporcionar continuidad a los segmentos de voz, evitando falsos negativos producidos por oclusiones momentáneas o caídas de energía entre sílabas. Adicionalmente, se implementa un mecanismo de discriminación según el cual, si un segmento tiene potencia o amplitud por debajo de unos lindares definidos por 'llindar0 - (1.8*alpha0)` y 'llindar_amp/14', el hangover es reducido en 3 en vez de 1.
 
 - Si lo desea, puede realizar también algún comentario acerca de la realización de la práctica que
   considere de interés de cara a su evaluación.
 
-  Para hallar los valores óptimos de los parámetros alpha0​, alpha1​, y beta, se han adaptado los scripts de Bash (run_vad.sh y vinga). Estos scripts han permitido realizar una búsqueda de los parámetros óptimos, evaluando las combinaciones sobre la base de datos db.v4 hasta encontrar el máximo de F-score.
+  Para hallar los valores óptimos de los parámetros alpha0​, alpha1​, beta y factor_amp, se han adaptado los scripts de Bash (run_vad.sh y vinga). Estos scripts han permitido realizar una búsqueda de los parámetros óptimos, evaluando las combinaciones sobre la base de datos db.v4, y los .wav prueba.wav, pav_2131.wav, hasta encontrar el máximo de F-score.
 
 
 ### Antes de entregar la práctica

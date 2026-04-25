@@ -43,7 +43,7 @@ const char help_message[] =
 "   -0 FLOAT, --alpha0 FLOAT    Increment per calcular el llindar0 [default: 9]\n"
 "   -1 FLOAT, --alpha1 FLOAT    Increment per calcular el llindar1 [default: 0.5]\n"
 "   -b FLOAT, --beta FLOAT      Factor d'adaptacio del llindar de soroll [default: 0.001]\n"
-"   -f FLOAT, --amp FLOAT       Factor d'amplitud màxima segons el senyal per considerar veu [default: 0.06]\n"
+"   -f FLOAT, --amp FLOAT       Factor d'amplitud màxima segons el senyal per considerar veu [default: 0.09]\n"
 "   -v, --verbose  Show debug information\n"
 "   -h, --help     Show this screen\n"
 "   --version      Show the version of the project\n"
@@ -319,7 +319,7 @@ int elems_to_args(Elements *elements, DocoptArgs *args, bool help,
 
 DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) {
     DocoptArgs args = {
-        0, 0, 0, (char*) "9", (char*) "0.5", (char*) "0.001", (char*) "0.06", NULL, NULL, NULL,
+        0, 0, 0, (char*) "9", (char*) "0.5", (char*) "0.001", (char*) "0.09", NULL, NULL, NULL,
         usage_pattern, help_message
     };
     Tokens ts;

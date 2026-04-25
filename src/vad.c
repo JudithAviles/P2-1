@@ -124,9 +124,9 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1, float fa
     int may_be_voice = (f.p > vad_data->llindar0 || f.zcr > vad_data->llindar_zcr || f.am > vad_data->llindar_amp);
     int may_be_silence = 0;
     if (may_be_voice) {
-      vad_data->hangover = 13; 
+      vad_data->hangover = 12; 
     } else {
-      may_be_silence = (f.p < vad_data->llindar0-(1.8*alpha0) || f.am < vad_data->llindar_amp/13);
+      may_be_silence = (f.p < vad_data->llindar0-(1.8*alpha0) || f.am < vad_data->llindar_amp/14);
       if (may_be_silence) {
         vad_data->hangover = vad_data->hangover - 3;
       } else {
