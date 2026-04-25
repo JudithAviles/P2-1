@@ -19,7 +19,7 @@ typedef struct {
     char *alpha0;
     char *alpha1;
     char *beta;
-    char *llindar_amp;
+    char *factor_amp;
     char *input_wav;
     char *output_vad;
     char *output_wav;
@@ -43,7 +43,7 @@ const char help_message[] =
 "   -0 FLOAT, --alpha0 FLOAT    Increment per calcular el llindar0 [default: 9]\n"
 "   -1 FLOAT, --alpha1 FLOAT    Increment per calcular el llindar1 [default: 0.5]\n"
 "   -b FLOAT, --beta FLOAT      Factor d'adaptacio del llindar de soroll [default: 0.001]\n"
-"   -a FLOAT, --amp FLOAT       Llindar d'amplitud mínima per considerar veu [default: 0.05]\n"
+"   -f FLOAT, --amp FLOAT       Factor d'amplitud màxima segons el senyal per considerar veu [default: 0.06]\n"
 "   -v, --verbose  Show debug information\n"
 "   -h, --help     Show this screen\n"
 "   --version      Show the version of the project\n"
@@ -289,7 +289,7 @@ int elems_to_args(Elements *elements, DocoptArgs *args, bool help,
                 args->beta = option->argument;
         } else if (!strcmp(option->olong, "--amp")) {
             if (option->argument)
-                args->llindar_amp = option->argument;
+                args->factor_amp = option->argument;
         } else if (!strcmp(option->olong, "--input-wav")) {
             if (option->argument)
                 args->input_wav = option->argument;
@@ -319,7 +319,7 @@ int elems_to_args(Elements *elements, DocoptArgs *args, bool help,
 
 DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) {
     DocoptArgs args = {
-        0, 0, 0, (char*) "9", (char*) "0.5", (char*) "0.001", (char*) "0.05", NULL, NULL, NULL,
+        0, 0, 0, (char*) "9", (char*) "0.5", (char*) "0.001", (char*) "0.06", NULL, NULL, NULL,
         usage_pattern, help_message
     };
     Tokens ts;
@@ -334,7 +334,7 @@ DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) {
         {"-0", "--alpha0", 1, 0, NULL},
         {"-1", "--alpha1", 1, 0, NULL},
         {"-b", "--beta", 1, 0, NULL},
-        {"-a", "--amp", 1, 0, NULL},
+        {"-f", "--amp", 1, 0, NULL},
         {"-i", "--input-wav", 1, 0, NULL},
         {"-o", "--output-vad", 1, 0, NULL},
         {"-w", "--output-wav", 1, 0, NULL}

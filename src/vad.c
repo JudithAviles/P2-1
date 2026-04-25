@@ -58,6 +58,7 @@ VAD_DATA * vad_open(float rate, float beta) {
   vad_data->beta = beta; 
   vad_data->llindar0 = 0.0f; 
   vad_data->llindar_zcr = 0.0f;
+  vad_data->llindar_amp = 0.0f;
 
   return vad_data;
 }
@@ -76,7 +77,7 @@ unsigned int vad_frame_size(VAD_DATA *vad_data) {
 
 
 
-VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1, float llindar_amp) {
+VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1, float factor_amp, float max_amp) {
 
   //Implementar preprocesado de señal para eliminar ruido
   //    - data cleaning
@@ -88,6 +89,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1, float ll
 
   Features f = compute_features(x, vad_data->frame_length , vad_data->sampling_rate);
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
+  vad_data->llindar_amp = factor_amp*max_amp;
 
   switch (vad_data->state) {
   case ST_INIT:
@@ -105,7 +107,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1, float ll
     break;
 
   case ST_SILENCE: {
-    int may_be_voice = (f.p > vad_data->llindar0 || f.zcr > vad_data->llindar_zcr || f.am > llindar_amp);
+    int may_be_voice = (f.p > vad_data->llindar0 || f.zcr > vad_data->llindar_zcr || f.am > vad_data->llindar_amp);
     if (may_be_voice) {
       vad_data->state = ST_VOICE;
       vad_data->hangover = 1;
@@ -113,20 +115,20 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1, float ll
       // Threshold adaptatiu:
       // Formula: llindar0 = (1-beta)*(llindar0-alpha0) + beta*P + alpha0
       vad_data->llindar0 = (1 - vad_data->beta) * (vad_data->llindar0 - alpha0) + vad_data->beta * f.p + alpha0;
-      llindar_amp = (1 - vad_data->beta) * (llindar_amp);
+      vad_data->llindar_amp = (1 - vad_data->beta) * (vad_data->llindar_amp);
     }
     break;
   }
 
   case ST_VOICE: {
-    int may_be_voice = (f.p > vad_data->llindar0 || f.zcr > vad_data->llindar_zcr || f.am > llindar_amp);
+    int may_be_voice = (f.p > vad_data->llindar0 || f.zcr > vad_data->llindar_zcr || f.am > vad_data->llindar_amp);
     int may_be_silence = 0;
     if (may_be_voice) {
       vad_data->hangover = 13; 
     } else {
-      may_be_silence = (f.p < vad_data->llindar0-(2*alpha0) || f.am < llindar_amp/50);
+      may_be_silence = (f.p < vad_data->llindar0-(1.8*alpha0) || f.am < vad_data->llindar_amp/13);
       if (may_be_silence) {
-        vad_data->hangover = vad_data->hangover - 2;
+        vad_data->hangover = vad_data->hangover - 3;
       } else {
         vad_data->hangover--;
       }

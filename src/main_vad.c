@@ -19,10 +19,11 @@ int main(int argc, char *argv[]) {
   VAD_DATA *vad_data;
   VAD_STATE state, last_state;
 
-  float *buffer, *buffer_zeros;
+  float *buffer, *buffer_zeros, *max_search;
   int frame_size;         /* in samples */
   float frame_duration;   /* in seconds */
   unsigned int t, last_t; /* in frames */
+  float max_amp = 0, max_amp2, max_amp3;
 
   char	*input_wav, *output_vad, *output_wav;
 
@@ -33,7 +34,7 @@ int main(int argc, char *argv[]) {
   float alpha0 = atof(args.alpha0);
   float alpha1 = atof(args.alpha1);
   float beta = atof(args.beta); 
-  float llindar_amp = atof(args.llindar_amp);
+  float factor_amp = atof(args.factor_amp);
 
   if (input_wav == 0 || output_vad == 0) {
     fprintf(stderr, "%s\n", args.usage_pattern);
@@ -65,6 +66,24 @@ int main(int argc, char *argv[]) {
     }
   }
 
+    /* Troba l'amplitud màxima del senyal de veu */
+  max_search = (float *) malloc(sizeof(float));
+  while((n_read = sf_read_float(sndfile_in, max_search, 1)) == 1){
+    if(*max_search > max_amp){
+      max_amp = *max_search;
+      max_amp2 = max_amp;
+      max_amp3 = max_amp2;
+    } else if (*max_search > max_amp2){
+      max_amp2 = *max_search;
+      max_amp3 = max_amp2;
+    } else if (*max_search > max_amp3){
+      max_amp3 = *max_search;
+    }
+  }
+  max_amp = (max_amp+max_amp2+max_amp3)/3;
+  sf_seek(sndfile_in, 0, SEEK_SET); /* Torna al principi del fitxer */
+  free(max_search);
+
   vad_data = vad_open(sf_info.samplerate, beta); 
   /* Allocate memory for buffers */
   frame_size   = vad_frame_size(vad_data);
@@ -83,7 +102,7 @@ int main(int argc, char *argv[]) {
       /* TODO: copy all the samples into sndfile_out */
     }
 
-    state = vad(vad_data, buffer, alpha0, alpha1, llindar_amp);
+    state = vad(vad_data, buffer, alpha0, alpha1, factor_amp, max_amp);
     if (verbose & DEBUG_VAD) vad_show_state(vad_data, stdout);
 
     /* TODO: print only SILENCE and VOICE labels */

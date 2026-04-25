@@ -19,6 +19,7 @@ typedef struct {
   //llindars de potencia i zcr
   float llindar0;
   float llindar_zcr;
+  float llindar_amp;
   //Per al smoothing de veu a silenci.
   int hangover;
   //Per a la incicialització del llindar de potencia
@@ -47,7 +48,7 @@ unsigned int vad_frame_size(VAD_DATA *);
 
     x: input frame
        It is assumed the length is frame_length */
-VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1, float llindar_amp);
+VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1, float factor_amp, float max_amp);
 
 /* Free memory
    Returns the state of the last (undecided) states. */
