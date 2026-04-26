@@ -1,4 +1,4 @@
-PAV - P2: detección de actividad vocal (VAD) -- Judith Avilés i Tomàs Parramon
+PAV - P2: detección de actividad vocal (VAD) -- Judith Avilés y Tomàs Parramon
 ============================================
 
 Esta práctica se distribuye a través del repositorio GitHub [Práctica 2](https://github.com/albino-pav/P2),
@@ -160,7 +160,7 @@ Ejercicios
 
   * Duración mínima razonable de los segmentos de voz y silencio.
 
-*El tramo de voz más corto seria una respuesta corta monosilabica (tipo si o no) o una preposición (a, y, o) y podria durar entre 200 y 300 ms.*
+*El tramo de voz más corto sería una respuesta corta monosilábica (tipo si o no) o una preposición (a, y, o) y podría durar entre 200 y 300 ms.*
 
   * ¿Es capaz de sacar alguna conclusión a partir de la evolución de la tasa de cruces por cero?
 
@@ -203,7 +203,7 @@ Recall S:330.69/376.26 87.89%   Precision S:330.69/346.35 95.48%   F-score S (1/
 
 ![Comparación de la cancelación de Ruido usando seaborn y matplotlib](/visualize/comparison.png)
 
-Como podemos observar, algunos tramos de ruido siguen siendo etiquetados como voz, sin embargo el silencio ahora es realmente silencioso. Si se desea se puede escuchar el audio limpio dentro de la carpeta del repositorio visualize, asi como se pueden per los scripts de python usados para la cancelacion del ruido y la representación a partir de los resultados de vad.c.
+Como podemos observar, algunos tramos de ruido siguen siendo etiquetados como voz, sin embargo, el silencio ahora es realmente silencioso. Si se desea se puede escuchar el audio limpio dentro de la carpeta del repositorio *visualize*, así como se pueden ver los scripts de Python usados para la cancelación del ruido y la representación a partir de los resultados de vad.c.
 
 #### Gestión de las opciones del programa usando `docopt_c`
 
@@ -219,15 +219,15 @@ Como podemos observar, algunos tramos de ruido siguen siendo etiquetados como vo
   parámetros alternativos, etc.).
 
 
-  * __Estimación Inicial del Piso de Ruido__: En lugar de utilizar la primera trama para fijar el umbral, se ha implementado una fase en el estado ST_INIT que calcula la media de potencia de las primeras 10 tramas. Esto evita que ruidos impulsivos al inicio del audio sesguen la detección.
+* __Estimación Inicial del Piso de Ruido__: En lugar de utilizar la primera trama para fijar el umbral, se ha implementado una fase en el estado ST_INIT que calcula la media de potencia de las primeras 10 tramas. Esto evita que ruidos impulsivos al inicio del audio sesguen la detección.
 
-  * __Detección con ZCR__: Se ha integrado la tasa de cruces por cero como característica complementaria a la potencia. Esto ha permitido mejorar significativamente el Recall de voz al detectar segmentos de baja energía pero alta frecuencia. Esto, según nuestras pruebas, ayuda especialmente en la detección de consonantes sordas (como /s/) del final de palabra que de otra forma serian etiquetadas como silencio.
+* __Detección con ZCR__: Se ha integrado la tasa de cruces por cero como característica complementaria a la potencia. Esto ha permitido mejorar significativamente el Recall de voz al detectar segmentos de baja energía pero alta frecuencia. Esto, según nuestras pruebas, ayuda especialmente en la detección de consonantes sordas (como /s/) del final de palabra que de otra forma serían etiquetadas como silencio.
 
-   * __Detección con amplitud__: Se ha integrado la amplitud de las muestras de la señal como característica complementaria a la potencia y la tasa de cruces por cero. Esto permite discriminar segmentos con una amplitud más pequeña para detectar el final de tramos de voz.
+* __Detección con amplitud__: Se ha integrado la amplitud de las muestras de la señal como característica complementaria a la potencia y la tasa de cruces por cero. Esto permite discriminar segmentos con una amplitud más pequeña para detectar el final de tramos de voz.
 
-  * __Algoritmo de Umbral Adaptativo__: Se ha implementado un seguimiento dinámico del ruido de fondo mediante una actualizacióndel umbral en el estado de silencio. Utilizando un parámetro de adaptación beta, el sistema es capaz de detectar las variaciones del ruido ambiental, reajustando _llindar0_ y _llindar\_amp_ en tiempo real.
+* __Algoritmo de Umbral Adaptativo__: Se ha implementado un seguimiento dinámico del ruido de fondo mediante una actualización del umbral en el estado de silencio. Utilizando un parámetro de adaptación beta, el sistema es capaz de detectar las variaciones del ruido ambiental, reajustando _llindar0_ y _llindar\_amp_ en tiempo real.
 
-  * __Mecanismo de Hangover Estabilizador__: Se ha ajustado un contador de hangover de 1 trama para el silencio y 12 tramas para la voz para proporcionar continuidad a los segmentos de voz, evitando falsos negativos producidos por oclusiones momentáneas o caídas de energía entre sílabas. Adicionalmente, se implementa un mecanismo de discriminación según el cual, si un segmento tiene potencia o amplitud por debajo de unos lindares definidos por `llindar0 - (1.8*alpha0)` y `llindar_amp/14`, el hangover es reducido en 3 en vez de 1.
+* __Mecanismo de Hangover Estabilizador__: Se ha ajustado un contador de hangover de 1 trama para el silencio y 12 tramas para la voz para proporcionar continuidad a los segmentos de voz, evitando falsos negativos producidos por oclusiones momentáneas o caídas de energía entre sílabas. Adicionalmente, se implementa un mecanismo de discriminación según el cual, si un segmento tiene potencia o amplitud por debajo de unos lindares definidos por `llindar0 - (1.8*alpha0)` y `llindar_amp/14`, el hangover es reducido en 3 en vez de 1.
 
 - Si lo desea, puede realizar también algún comentario acerca de la realización de la práctica que
   considere de interés de cara a su evaluación.
